@@ -46,7 +46,11 @@ var PUZZLE_GAME = (function () {
                 return true;
             },
             createNewPiece: function () {
+                if(area[0][5]){
+                    return false;
+                }
                 pieceInMovement = new Piece();
+                return true;
             }
         }
     };
@@ -73,7 +77,9 @@ var PUZZLE_GAME = (function () {
 
     function runGame() {
         if (stageArea.moveDown() === false) {
-            stageArea.createNewPiece();
+            if(!stageArea.createNewPiece()){
+                return false;
+            }
         }
     }
 
