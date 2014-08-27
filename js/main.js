@@ -1,6 +1,9 @@
 'use strict';
 var PUZZLE_GAME = (function () {
     function StageArea(stage) {
+        //the bigger this value, the slower the falling speed
+        var speed = 50;
+        var speedCounter = 0;
         var area = (function () {
             var areaArray = new Array(10);
             for (var i = 0; i < 10; i++) {
@@ -38,6 +41,11 @@ var PUZZLE_GAME = (function () {
 
         return {
             moveDown: function () {
+                if(speedCounter < speed){
+                    speedCounter++;
+                    return true;
+                }
+                speedCounter = 0;
                 if (pieceInMovement.getY() >= 9
                     || area[pieceInMovement.getY() + 1][pieceInMovement.getX()]) {
                     return false;
