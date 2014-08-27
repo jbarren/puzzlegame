@@ -1,9 +1,6 @@
-'use strict'
+'use strict';
 var PUZZLE_GAME = (function () {
     function StageArea(stage) {
-
-        var pieceInMovement = new Piece();
-
         var area = (function () {
             var areaArray = new Array(10);
             for (var i = 0; i < 10; i++) {
@@ -12,11 +9,14 @@ var PUZZLE_GAME = (function () {
             return areaArray;
         }());
 
+        var pieceInMovement = new Piece();
+
         function Piece() {
             var texture = PIXI.Texture.fromImage("../images/square.png");
             var image = new PIXI.Sprite(texture);
             var x = 5;
             var y = 0;
+            area[y][x] = this;
             image.position.x = x * 50;
             image.position.y = y * 50;
             stage.addChild(image);
@@ -28,22 +28,24 @@ var PUZZLE_GAME = (function () {
                     return y;
                 },
                 moveDown: function () {
+                    area[y][x] = undefined;
                     y++;
+                    area[y][x] = this;
                     image.position.y = y * 50;
                 }
             };
         };
 
         return {
-            moveDown: function() {
-                if (area[pieceInMovement.getY() + 1][pieceInMovement.getX()] === undefined
-                    && pieceInMovement.getY() < 10) {
-                    pieceInMovement.moveDown();
-                    return true;
+            moveDown: function () {
+                if (pieceInMovement.getY() >= 9
+                    || area[pieceInMovement.getY() + 1][pieceInMovement.getX()]) {
+                    return false;
                 }
-                return false;
+                pieceInMovement.moveDown();
+                return true;
             },
-            createNewPiece: function() {
+            createNewPiece: function () {
                 pieceInMovement = new Piece();
             }
         }
