@@ -70,6 +70,8 @@ var PUZZLE_GAME = (function () {
                     return false;
                 }
                 pieceInMovement.moveLeft();
+                input.keyPressedAlready = true;
+                input.left = false;
                 return true;
             },
             moveRight: function (){
@@ -77,6 +79,8 @@ var PUZZLE_GAME = (function () {
                     return false;
                 }
                 pieceInMovement.moveRight();
+                input.keyPressedAlready = true;
+                input.right = false;
                 return true;
             },
             createNewPiece: function () {
@@ -94,7 +98,8 @@ var PUZZLE_GAME = (function () {
     var stageArea;
     var input = {
         left: false,
-        right: false
+        right: false,
+        keyPressedAlready: false
     };
 
     function start() {
@@ -116,6 +121,12 @@ var PUZZLE_GAME = (function () {
     }
 
     function onkey(ev, key, pressed) {
+        if(!pressed){
+            input.keyPressedAlready = false;
+        }
+        if(input.keyPressedAlready){
+            return false;
+        }
         switch (key) {
             case KEY.LEFT:
                 input.left = pressed;
