@@ -35,13 +35,25 @@ var PUZZLE_GAME = (function () {
                     y++;
                     area[y][x] = this;
                     image.position.y = y * 50;
+                },
+                moveLeft: function () {
+                    area[y][x] = undefined;
+                    x--;
+                    area[y][x] = this;
+                    image.position.x = x * 50;
+                },
+                moveRight: function () {
+                    area[y][x] = undefined;
+                    x++;
+                    area[y][x] = this;
+                    image.position.x = x * 50;
                 }
             };
         };
 
         return {
             moveDown: function () {
-                if(speedCounter < speed){
+                if (speedCounter < speed) {
                     speedCounter++;
                     return true;
                 }
@@ -53,8 +65,22 @@ var PUZZLE_GAME = (function () {
                 pieceInMovement.moveDown();
                 return true;
             },
+            moveLeft: function (){
+                if(pieceInMovement.getX() <= 0 || area[pieceInMovement.getY()][pieceInMovement.getX() - 1]){
+                    return false;
+                }
+                pieceInMovement.moveLeft();
+                return true;
+            },
+            moveRight: function (){
+                if(pieceInMovement.getX() >= 9 || area[pieceInMovement.getY()][pieceInMovement.getX() + 1]){
+                    return false;
+                }
+                pieceInMovement.moveRight();
+                return true;
+            },
             createNewPiece: function () {
-                if(area[0][5]){
+                if (area[0][5]) {
                     return false;
                 }
                 pieceInMovement = new Piece();
@@ -66,13 +92,53 @@ var PUZZLE_GAME = (function () {
     var stage;
     var renderer;
     var stageArea;
+    var input = {
+        left: false,
+        right: false
+    };
 
     function start() {
         stage = new PIXI.Stage(0x66FF99);
         renderer = PIXI.autoDetectRenderer(600, 600);
         document.body.appendChild(renderer.view);
         stageArea = new StageArea(stage);
+        initializeKeyboardListeners();
         requestAnimFrame(animate);
+    }
+
+    function initializeKeyboardListeners() {
+        document.addEventListener('keydown', function (ev) {
+            return onkey(ev, ev.keyCode, true);
+        }, false);
+        document.addEventListener('keyup', function (ev) {
+            return onkey(ev, ev.keyCode, false);
+        }, false);
+    }
+
+    function onkey(ev, key, pressed) {
+        switch (key) {
+            case KEY.LEFT:
+                input.left = pressed;
+                ev.preventDefault();
+                break;
+            case KEY.RIGHT:
+                input.right = pressed;
+                ev.preventDefault();
+                break;
+        }
+    }
+
+    function handleInput(){
+        //if by any chance both left and right are pressed don't move
+        if(input.left && input.right){
+            return false;
+        }
+        if(input.left){
+            return stageArea.moveLeft();
+        }
+        if(input.right){
+            return stageArea.moveRight();
+        }
     }
 
     function animate() {
@@ -84,8 +150,9 @@ var PUZZLE_GAME = (function () {
     }
 
     function runGame() {
+        handleInput();
         if (stageArea.moveDown() === false) {
-            if(!stageArea.createNewPiece()){
+            if (!stageArea.createNewPiece()) {
                 return false;
             }
         }
