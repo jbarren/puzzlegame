@@ -14,15 +14,47 @@ var PUZZLE_GAME = (function () {
 
         var pieceInMovement = new Piece();
 
-        function Piece() {
-            var texture = PIXI.Texture.fromImage("../images/square.png");
-            var image = new PIXI.Sprite(texture);
+        function Piece(colorNumber) {
+            var _color;
+            var _texture;
+            switch (colorNumber) {
+                case 0:
+                    _color = 'blue';
+                    _texture = PIXI.Texture.fromImage("../images/square_blue.png");
+                    break;
+
+                case 1:
+                    _color = 'green';
+                    _texture = PIXI.Texture.fromImage("../images/square_green.png");
+                    break;
+
+                case 2:
+                    _color = 'red';
+                    _texture = PIXI.Texture.fromImage("../images/square_red.png");
+                    break;
+
+                case 3:
+                    _color = 'white';
+                    _texture = PIXI.Texture.fromImage("../images/square_white.png");
+                    break;
+
+                case 4:
+                    _color = 'yellow';
+                    _texture = PIXI.Texture.fromImage("../images/square_yellow.png");
+                    break;
+                default :
+                    _color = 'white';
+                    _texture = PIXI.Texture.fromImage("../images/square_white.png");
+                    break;
+            }
+
+            var _image = new PIXI.Sprite(_texture);
             var x = 5;
             var y = 0;
             area[y][x] = this;
-            image.position.x = x * 50;
-            image.position.y = y * 50;
-            stage.addChild(image);
+            _image.position.x = x * 50;
+            _image.position.y = y * 50;
+            stage.addChild(_image);
             return {
                 getX: function () {
                     return x;
@@ -30,23 +62,26 @@ var PUZZLE_GAME = (function () {
                 getY: function () {
                     return y;
                 },
+                getColor: function () {
+                    return _color;
+                },
                 moveDown: function () {
                     area[y][x] = undefined;
                     y++;
                     area[y][x] = this;
-                    image.position.y = y * 50;
+                    _image.position.y = y * 50;
                 },
                 moveLeft: function () {
                     area[y][x] = undefined;
                     x--;
                     area[y][x] = this;
-                    image.position.x = x * 50;
+                    _image.position.x = x * 50;
                 },
                 moveRight: function () {
                     area[y][x] = undefined;
                     x++;
                     area[y][x] = this;
-                    image.position.x = x * 50;
+                    _image.position.x = x * 50;
                 }
             };
         };
@@ -65,8 +100,8 @@ var PUZZLE_GAME = (function () {
                 pieceInMovement.moveDown();
                 return true;
             },
-            moveLeft: function (){
-                if(pieceInMovement.getX() <= 0 || area[pieceInMovement.getY()][pieceInMovement.getX() - 1]){
+            moveLeft: function () {
+                if (pieceInMovement.getX() <= 0 || area[pieceInMovement.getY()][pieceInMovement.getX() - 1]) {
                     return false;
                 }
                 pieceInMovement.moveLeft();
@@ -74,8 +109,8 @@ var PUZZLE_GAME = (function () {
                 input.left = false;
                 return true;
             },
-            moveRight: function (){
-                if(pieceInMovement.getX() >= 9 || area[pieceInMovement.getY()][pieceInMovement.getX() + 1]){
+            moveRight: function () {
+                if (pieceInMovement.getX() >= 9 || area[pieceInMovement.getY()][pieceInMovement.getX() + 1]) {
                     return false;
                 }
                 pieceInMovement.moveRight();
@@ -87,7 +122,7 @@ var PUZZLE_GAME = (function () {
                 if (area[0][5]) {
                     return false;
                 }
-                pieceInMovement = new Piece();
+                pieceInMovement = new Piece(Math.floor(Math.random() * 5));
                 return true;
             }
         }
@@ -121,10 +156,10 @@ var PUZZLE_GAME = (function () {
     }
 
     function onkey(ev, key, pressed) {
-        if(!pressed){
+        if (!pressed) {
             input.keyPressedAlready = false;
         }
-        if(input.keyPressedAlready){
+        if (input.keyPressedAlready) {
             return false;
         }
         switch (key) {
@@ -139,17 +174,21 @@ var PUZZLE_GAME = (function () {
         }
     }
 
-    function handleInput(){
+    function handleInput() {
         //if by any chance both left and right are pressed don't move
-        if(input.left && input.right){
+        if (input.left && input.right) {
             return false;
         }
-        if(input.left){
+        if (input.left) {
             return stageArea.moveLeft();
         }
-        if(input.right){
+        if (input.right) {
             return stageArea.moveRight();
         }
+    }
+
+    function checkMatch() {
+
     }
 
     function animate() {
@@ -163,6 +202,7 @@ var PUZZLE_GAME = (function () {
     function runGame() {
         handleInput();
         if (stageArea.moveDown() === false) {
+            checkMatch();
             if (!stageArea.createNewPiece()) {
                 return false;
             }
