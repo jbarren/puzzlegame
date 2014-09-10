@@ -1,5 +1,5 @@
-'use strict';
 var PUZZLE_GAME = (function () {
+    'use strict';
     function StageArea(stage) {
         //the bigger this value, the slower the falling speed
         var speed = 50;
@@ -84,7 +84,40 @@ var PUZZLE_GAME = (function () {
                     _image.position.x = x * 50;
                 }
             };
-        };
+        }
+
+        function collectCoordsToRemove(){
+            var coordsToRemove;
+            var tempCoord;
+            var prevColor;
+            var sameCounter;
+            var markedToRemove = (function () {
+                var areaArray = new Array(10);
+                for (var i = 0; i < 10; i++) {
+                    areaArray[i] = new Array(10);
+                }
+                return areaArray;
+            }());
+            for(var i=0;i<10;i++){
+                for(var j= 0;j<10;j++){
+                  if(!markedToRemove[i][j]){
+                    searchForSameColor(i, j);
+                  }
+                }
+            }
+
+            function searchForSameColor(a, b){
+              if(!area[a][b]){
+                markedToRemove[a][b] = 1;
+                return;
+              }
+              var color = area[a][b].getColor();
+              //up
+
+            }
+        }
+
+
 
         return {
             moveDown: function () {
@@ -93,8 +126,7 @@ var PUZZLE_GAME = (function () {
                     return true;
                 }
                 speedCounter = 0;
-                if (pieceInMovement.getY() >= 9
-                    || area[pieceInMovement.getY() + 1][pieceInMovement.getX()]) {
+                if (pieceInMovement.getY() >= 9 || area[pieceInMovement.getY() + 1][pieceInMovement.getX()]) {
                     return false;
                 }
                 pieceInMovement.moveDown();
@@ -124,9 +156,17 @@ var PUZZLE_GAME = (function () {
                 }
                 pieceInMovement = new Piece(Math.floor(Math.random() * 5));
                 return true;
+            },
+            removeMatches: function () {
+                var twoDimArray = collectCoordsToRemove();
+                if(twoDimArray){
+                    removeMatchesAndFall(twoDimArray);
+                    return true;
+                }
+                return false;
             }
-        }
-    };
+        };
+    }
 
     var stage;
     var renderer;
@@ -188,7 +228,11 @@ var PUZZLE_GAME = (function () {
     }
 
     function checkMatch() {
-
+        if(stageArea.removeMatches()){
+            renderer.render(stage);
+            requestAnimFrame(animate);
+            checkMatch();
+        }
     }
 
     function animate() {
@@ -211,4 +255,3 @@ var PUZZLE_GAME = (function () {
 
     start();
 }());
-
