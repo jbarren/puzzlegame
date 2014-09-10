@@ -1,18 +1,18 @@
 var PUZZLE_GAME = (function () {
-    'use strict';
-    function StageArea(stage) {
-        //the bigger this value, the slower the falling speed
-        var speed = 50;
-        var speedCounter = 0;
-        var area = (function () {
-            var areaArray = new Array(10);
-            for (var i = 0; i < 10; i++) {
-                areaArray[i] = new Array(10);
-            }
-            return areaArray;
-        }());
+  'use strict';
+  function StageArea(stage) {
+      //the bigger this value, the slower the falling speed
+      var speed = 50;
+      var speedCounter = 0;
+      var area = (function () {
+          var areaArray = new Array(10);
+          for (var i = 0; i < 10; i++) {
+              areaArray[i] = new Array(10);
+          }
+          return areaArray;
+      }());
 
-        var pieceInMovement = new Piece();
+      var pieceInMovement = new Piece();
 
         function Piece(colorNumber) {
             var _color;
@@ -48,42 +48,42 @@ var PUZZLE_GAME = (function () {
                     break;
             }
 
-            var _image = new PIXI.Sprite(_texture);
-            var x = 5;
-            var y = 0;
-            area[y][x] = this;
+          var _image = new PIXI.Sprite(_texture);
+          var x = 5;
+          var y = 0;
+          area[y][x] = this;
             _image.position.x = x * 50;
             _image.position.y = y * 50;
             stage.addChild(_image);
-            return {
-                getX: function () {
-                    return x;
-                },
-                getY: function () {
-                    return y;
-                },
+          return {
+              getX: function () {
+                  return x;
+              },
+              getY: function () {
+                  return y;
+              },
                 getColor: function () {
                     return _color;
                 },
-                moveDown: function () {
-                    area[y][x] = undefined;
-                    y++;
-                    area[y][x] = this;
+              moveDown: function () {
+                  area[y][x] = undefined;
+                  y++;
+                  area[y][x] = this;
                     _image.position.y = y * 50;
-                },
-                moveLeft: function () {
-                    area[y][x] = undefined;
-                    x--;
-                    area[y][x] = this;
+              },
+              moveLeft: function () {
+                  area[y][x] = undefined;
+                  x--;
+                  area[y][x] = this;
                     _image.position.x = x * 50;
-                },
-                moveRight: function () {
-                    area[y][x] = undefined;
-                    x++;
-                    area[y][x] = this;
+              },
+              moveRight: function () {
+                  area[y][x] = undefined;
+                  x++;
+                  area[y][x] = this;
                     _image.position.x = x * 50;
-                }
-            };
+              }
+          };
         }
 
         function collectCoordsToRemove(){
@@ -119,41 +119,41 @@ var PUZZLE_GAME = (function () {
 
 
 
-        return {
-            moveDown: function () {
-                if (speedCounter < speed) {
-                    speedCounter++;
-                    return true;
-                }
-                speedCounter = 0;
+      return {
+          moveDown: function () {
+              if (speedCounter < speed) {
+                  speedCounter++;
+                  return true;
+              }
+              speedCounter = 0;
                 if (pieceInMovement.getY() >= 9 || area[pieceInMovement.getY() + 1][pieceInMovement.getX()]) {
-                    return false;
-                }
-                pieceInMovement.moveDown();
-                return true;
-            },
+                  return false;
+              }
+              pieceInMovement.moveDown();
+              return true;
+          },
             moveLeft: function () {
                 if (pieceInMovement.getX() <= 0 || area[pieceInMovement.getY()][pieceInMovement.getX() - 1]) {
-                    return false;
-                }
-                pieceInMovement.moveLeft();
-                input.keyPressedAlready = true;
-                input.left = false;
-                return true;
-            },
+                  return false;
+              }
+              pieceInMovement.moveLeft();
+              input.keyPressedAlready = true;
+              input.left = false;
+              return true;
+          },
             moveRight: function () {
                 if (pieceInMovement.getX() >= 9 || area[pieceInMovement.getY()][pieceInMovement.getX() + 1]) {
-                    return false;
-                }
-                pieceInMovement.moveRight();
-                input.keyPressedAlready = true;
-                input.right = false;
-                return true;
-            },
-            createNewPiece: function () {
-                if (area[0][5]) {
-                    return false;
-                }
+                  return false;
+              }
+              pieceInMovement.moveRight();
+              input.keyPressedAlready = true;
+              input.right = false;
+              return true;
+          },
+          createNewPiece: function () {
+              if (area[0][5]) {
+                  return false;
+              }
                 pieceInMovement = new Piece(Math.floor(Math.random() * 5));
                 return true;
             },
